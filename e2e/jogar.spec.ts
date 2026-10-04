@@ -5,7 +5,7 @@ const SAVE_KEY = 'sapere-aude:save:v1';
 /** Espera o botão aceitar ativação (ver armButton) e toca nele, como uma pessoa faria. */
 async function tocar(page: Page, name: string | RegExp) {
   const button = page.getByRole('button', { name });
-  await expect(button).toHaveAttribute('data-pronto', '');
+  await expect(button).toHaveAttribute('data-pronto', '', { timeout: 15_000 });
   await button.click();
 }
 
@@ -226,4 +226,53 @@ test('tela de 320 px não tem rolagem horizontal', async ({ page }) => {
   await continuar(page, 'Manhã');
   const larguraExtra = await page.evaluate(() => document.documentElement.scrollWidth - window.innerWidth);
   expect(larguraExtra).toBeLessThanOrEqual(0);
+});
+
+test('cartão de Kant cabe numa tela de 320×568 (título visível)', async ({ page }) => {
+  test.setTimeout(60_000);
+  await page.setViewportSize({ width: 320, height: 568 });
+  await page.goto('./');
+  await jogarAte(page, ACEITAR, 'Isso foi o que Kant chamou de menoridade autoimposta.');
+  await expect(page.getByRole('heading', { name: 'Isso foi o que Kant chamou de menoridade autoimposta.' })).toBeInViewport();
+});
+
+test('Sobre dá acesso ao texto completo de Kant e aos créditos', async ({ page }) => {
+  await page.goto('./');
+  await page.getByRole('button', { name: 'Sobre' }).click();
+  await expect(page.getByText('Concepção e direção', { exact: false })).toBeVisible();
+  await tocar(page, 'Ler o texto completo de Kant');
+  await expect(page.getByRole('heading', { name: 'Resposta à pergunta: O que é Esclarecimento?' })).toBeVisible();
+  await tocar(page, 'Voltar');
+  await expect(page.getByRole('heading', { name: 'Sobre o jogo' })).toBeVisible();
+});
+
+test.describe('com animações', () => {
+  test.use({ reducedMotion: 'no-preference' });
+
+  test('Sobre aberto durante uma cena: Enter fecha o Sobre e não escolhe nada por trás', async ({ page }) => {
+    await page.goto('./');
+    await continuar(page, 'Configuração');
+    await tocar(page, 'Sim, claro!');
+    await page.getByRole('button', { name: 'Sobre' }).click();
+    await expect(page.getByRole('heading', { name: 'Sobre o jogo' })).toBeVisible();
+    await page.getByRole('button', { name: 'Ótimo!' }).waitFor({ state: 'attached', timeout: 15_000 });
+    await expect(page.getByRole('button', { name: 'Fechar' })).toBeFocused();
+    await expect(page.getByRole('button', { name: 'Fechar' })).toHaveAttribute('data-pronto', '');
+    await page.keyboard.press('Enter');
+    await expect(page.getByRole('heading', { name: 'Sobre o jogo' })).toHaveCount(0);
+    await expect(page.getByText('Combinado!')).toHaveCount(0);
+  });
+
+  test('Sobre continua aberto quando a cena troca de app, e Esc fecha', async ({ page }) => {
+    test.setTimeout(60_000);
+    await page.goto('./');
+    await configurarAceitandoTudo(page);
+    await continuar(page, 'Manhã');
+    await tocar(page, 'Ler a matéria antes de responder');
+    await page.getByRole('button', { name: 'Sobre' }).click();
+    await page.getByRole('heading', { name: 'Biblioteca do bairro deixará de abrir à noite' }).waitFor({ state: 'attached', timeout: 15_000 });
+    await expect(page.getByRole('heading', { name: 'Sobre o jogo' })).toBeVisible();
+    await page.keyboard.press('Escape');
+    await expect(page.getByRole('heading', { name: 'Sobre o jogo' })).toHaveCount(0);
+  });
 });

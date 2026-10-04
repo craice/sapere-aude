@@ -17,6 +17,8 @@ export function showChapterCard(screen: HTMLElement, title: string): Promise<voi
       resolve();
     });
     screen.append(card);
-    button.focus();
+    // Abre no topo: o foco no botão não pode rolar o título para fora da tela.
+    button.focus({ preventScroll: true });
+    card.scrollTop = 0;
   });
 }

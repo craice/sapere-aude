@@ -109,6 +109,7 @@ describe('roteiro pt-BR', () => {
       cap4_liberta: 'rompeu_sem_pensar',
     });
     expect(eventos).toEqual(['padrao_comodidade']);
+    expect(engine.getMoments().map((m) => m.id)).toEqual(MOMENTOS);
   });
 
   it('caminho "pensar": pensa sempre, confia na médica, recusa o resumo e lê Kant', () => {
@@ -127,6 +128,23 @@ describe('roteiro pt-BR', () => {
     expect(linhas.some((l) => l.app === 'texto')).toBe(true);
     const resposta = linhas.find((l) => l.meta.from === 'eu');
     expect(resposta?.text.startsWith('Li a matéria.')).toBe(true);
+  });
+
+  it('pensar também pode concluir a favor do corte (caps. 1, 3 e 4 coerentes)', () => {
+    const favor: Estrategia = (choices) => {
+      const posicao = choices.find((c) => c.text === 'O corte faz sentido.' || c.text === 'Apoio a mudança.');
+      if (posicao) return posicao.index;
+      return preferir('pensar', 'ficha', 'compor')(choices);
+    };
+    const { engine, linhas } = jogar(json, favor);
+    const tipos = Object.fromEntries(engine.getMoments().map((m) => [m.id, m.type]));
+    expect(tipos.cap3_ordem).toBe('pensou');
+    expect(tipos.cap4_debate).toBe('pensou');
+    const minhas = linhas.filter((l) => l.meta.from === 'eu').map((l) => l.text);
+    expect(minhas.some((t) => t.includes('No fim, acho que o corte faz sentido.'))).toBe(true);
+    expect(linhas.some((l) => l.text.includes('Apoio a mudança.'))).toBe(true);
+    expect(minhas.some((t) => t.includes('eu até apoio a mudança'))).toBe(true);
+    expect(linhas.some((l) => l.text.includes('Peço que a decisão seja revista'))).toBe(false);
   });
 
   it('pedir resumo no meio da leitura e voltar não registra momento duplicado', () => {

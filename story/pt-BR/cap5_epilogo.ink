@@ -6,15 +6,31 @@
 === cap5 ===
 Epílogo # chapter: cap5 # app: retrato # time: 22:30
 Seu dia, visto de cima
+~ temp maior = MAX(MAX(n_pensou, n_comodidade), MAX(n_medo, n_rompeu))
+~ temp empates = 0
+{ n_pensou == maior:
+  ~ empates++
+}
+{ n_comodidade == maior:
+  ~ empates++
+}
+{ n_medo == maior:
+  ~ empates++
+}
+{ n_rompeu == maior:
+  ~ empates++
+}
 {
-- n_pensou >= n_comodidade && n_pensou >= n_medo && n_pensou >= n_rompeu:
+- empates > 1:
+  Você oscilou: em algumas decisões pensou por conta própria; em outras, delegou ou recuou. É assim com quase todo mundo — e é por isso que Kant fala em caminho, não em chegada. # evento: padrao_misto
+- n_pensou == maior:
   Na maior parte das vezes, você pensou por conta própria — e isso deu trabalho. Kant diria que é exatamente esse esforço que vale a pena. # evento: padrao_pensou
-- n_comodidade >= n_medo && n_comodidade >= n_rompeu:
+- n_comodidade == maior:
   Você delegou mais por comodidade do que por medo. Kant diria que o primeiro passo não é ficar mais inteligente: é se decidir. # evento: padrao_comodidade
-- n_medo >= n_rompeu:
+- n_medo == maior:
   Muitas vezes, você recuou por medo do que poderia dar errado. Kant diria que o perigo não é tão grande: depois de algumas quedas, aprende-se a andar. # evento: padrao_medo
 - else:
-  Algumas vezes, você rompeu sem pensar: trocou um andador por outro, ou brigou no lugar errado. Para Kant, sair da menoridade não é desobedecer a tudo; é pensar — e argumentar em público. # evento: padrao_rompeu
+  Algumas vezes, você rompeu sem pensar: {liberta_instalado: trocou um andador por outro|agiu no impulso}, quando o caminho era argumentar. Para Kant, sair da menoridade não é desobedecer a tudo; é pensar — e argumentar em público. # evento: padrao_rompeu
 }
 { n_razao > 0:
   E quando confiou na receita da médica, fez bem. Kant não pede que você saiba tudo; pede que não renuncie a pensar.

@@ -28,17 +28,20 @@ function showFatal(error: unknown): void {
 function boot(): void {
   if (!host) return;
   try {
-    const { engine, step } = startGame(() => new StoryEngine(storyJson), store);
+    const { engine, step, resumed } = startGame(() => new StoryEngine(storyJson), store);
     const restart = () => {
       store.clear();
       boot();
     };
-    const phone: Phone = new Phone(host, (button) => openAbout(phone.screen, { onRestart: restart, returnFocus: button }));
+    const phone: Phone = new Phone(host, (button) =>
+      openAbout({ root: phone.root, story: phone.screen, onRestart: restart, returnFocus: button }),
+    );
     const renderer = new Renderer(phone, engine, {
       onCheckpoint: (checkpoint) => store.save(checkpoint),
       onRestart: restart,
       onError: showFatal,
       analytics,
+      resumed,
     });
     void renderer.present(step);
   } catch (error) {

@@ -43,3 +43,10 @@ export function browserAnalytics(): Analytics {
     },
   });
 }
+
+/** Nome do evento de capítulo (a spec chama o primeiro de "inicio" e o último de "epilogo"). */
+export function chapterEvent(chapter: string): string {
+  if (chapter === 'cap0') return 'inicio';
+  if (chapter === 'cap5') return 'epilogo';
+  return chapter;
+}

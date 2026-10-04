@@ -32,6 +32,9 @@ VAR arg_uso = false
 VAR arg_orcamento = false
 VAR arg_consulta = false
 VAR arg_proposta = false
+VAR arg_sabado = false
+VAR arg_seguranca = false
+VAR posicao_cap3 = ""
 VAR acertos = 0
 
 // Capítulo 4
@@ -89,6 +92,18 @@ INCLUDE fim.ink
   - else:
     ~ return ""
 }
+
+// A posição do jogador sobre o corte: a da carta (cap. 3), ou, sem carta, a da manhã (cap. 1).
+=== function apoia_corte() ===
+{ cap3_escreveu:
+  ~ return posicao_cap3 == "apoio" || posicao_cap3 == "condicional"
+- else:
+  ~ return posicao_cap1 == "sentido"
+}
+
+// O jogador viu o dado dos 40% (na matéria do cap. 1 ou nos argumentos do cap. 3)?
+=== function viu_uso() ===
+~ return ficha_uso || arg_uso
 
 // Altera o conforto mantendo-o entre 0 e 100.
 === function ajustar_conforto(delta) ===

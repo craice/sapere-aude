@@ -1,16 +1,9 @@
-import kantMarkdown from '../../../content/pt-BR/kant/esclarecimento.md?raw';
 import type { StoryChoice, StoryLine } from '../../engine/StoryEngine';
 import { t } from '../../i18n';
 import { createChoiceButtons, focusPreferred, waitForContinue } from '../choices';
 import { h } from '../dom';
-import { parseMarkdownLite, type Block } from '../markdown';
+import { renderKantText } from '../kantText';
 import type { AppView } from './AppView';
-
-function renderBlock(block: Block): HTMLElement {
-  if (block.kind === 'hr') return h('hr');
-  const tag = block.kind === 'h1' ? 'h1' : block.kind === 'quote' ? 'blockquote' : 'p';
-  return h(tag, {}, block.spans.map((s) => (s.em ? h('em', { text: s.text }) : s.strong ? h('strong', { text: s.text }) : s.text)));
-}
 
 /** Leitor do texto completo de Kant. As linhas do roteiro aparecem antes do texto, como introdução. */
 export class TextoApp implements AppView {
@@ -30,7 +23,7 @@ export class TextoApp implements AppView {
   async showLine(line: StoryLine): Promise<void> {
     this.intro.append(h('p', { text: line.text }));
     if (this.artigo.childElementCount === 0) {
-      this.artigo.append(...parseMarkdownLite(kantMarkdown).map(renderBlock));
+      this.artigo.append(...renderKantText());
       const titulo = this.artigo.querySelector('h1');
       titulo?.setAttribute('tabindex', '-1');
       titulo?.focus();

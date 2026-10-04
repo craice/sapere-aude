@@ -176,12 +176,17 @@ html, body {
 .ficha { background: var(--ficha); border-color: var(--ficha-borda); font-family: var(--leitura); }
 .leitor__contador { font-size: 13px; font-weight: 600; margin: 12px 0 0; }
 
-/* Cartão de capítulo */
+/* Cartão de capítulo (e demais sobreposições). Centralizado por margens automáticas, não por
+   justify-content: assim, quando o conteúdo é maior que a tela, ele rola a partir do topo. */
 .card {
   position: absolute; inset: 0; z-index: 10;
-  display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 32px;
-  background: var(--texto); color: var(--tela); padding: 24px;
+  display: flex; flex-direction: column; align-items: center; justify-content: flex-start; gap: 32px;
+  background: var(--texto); color: var(--tela); padding: 24px; overflow-y: auto;
 }
+.card > :first-child { margin-top: auto; }
+.card > :last-child { margin-bottom: auto; }
+.sobre, .sobre-texto { z-index: 20; }
+.sobre-texto { background: #fff; color: var(--texto); align-items: stretch; gap: 0; }
 .card__titulo { font-family: var(--leitura); font-weight: 400; font-size: 40px; margin: 0; text-align: center; }
 .card__continuar {
   font: inherit; font-size: 16px; padding: 12px 28px; border-radius: 999px;
@@ -212,7 +217,7 @@ html, body {
 .narrativa__fala--amparo strong { color: var(--amparo); }
 
 /* Cartão de Kant */
-.card--kant { justify-content: center; gap: 20px; overflow-y: auto; }
+.card--kant { gap: 20px; }
 .kant__titulo { font-family: var(--leitura); font-weight: 400; font-size: 24px; line-height: 1.25; margin: 0; text-align: center; }
 .kant__citacao { margin: 0; padding: 0 0 0 14px; border-left: 3px solid #9d93ff; font-family: var(--leitura); font-size: 16px; line-height: 1.5; }
 .kant__citacao p { margin: 0 0 10px; }
@@ -243,7 +248,7 @@ html, body {
 .leitor__manchete:focus { outline: none; }
 
 /* Sobre */
-.sobre { justify-content: flex-start; align-items: stretch; gap: 0; overflow-y: auto; text-align: left; font-size: 15px; line-height: 1.45; }
+.sobre { align-items: stretch; gap: 0; text-align: left; font-size: 15px; line-height: 1.45; }
 .sobre__titulo { font-family: var(--leitura); font-weight: 400; font-size: 28px; margin: 8px 0 12px; }
 .sobre p { margin: 0 0 10px; }
 .sobre a { color: #c9c3ff; }

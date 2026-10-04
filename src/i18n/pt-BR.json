@@ -40,5 +40,8 @@
   "sobre.privacidade": "Privacidade: o jogo não usa cookies nem coleta dados pessoais; no máximo, conta acessos de forma anônima.",
   "sobre.recomecar": "Recomeçar do início",
   "sobre.confirmar": "Tem certeza? Sim, apagar o progresso e recomeçar",
-  "sobre.fechar": "Fechar"
+  "sobre.fechar": "Fechar",
+  "sobre.creditos": "Concepção e direção: Rafael (craice). Roteiro, código e tradução feitos com assistência de IA (Claude, da Anthropic).",
+  "sobre.lerKant": "Ler o texto completo de Kant",
+  "sobre.voltar": "Voltar"
 }

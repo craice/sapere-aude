@@ -11,9 +11,9 @@ export function showKantCard(screen: HTMLElement, title: string, key: string): P
   if (!fragmentos) return Promise.reject(new Error(`Trecho de Kant inexistente: "${key}"`));
   return new Promise((resolve) => {
     const button = h('button', { className: 'card__continuar', text: t('capitulo.continuar'), attrs: { type: 'button' } });
-    const card = h('div', { className: 'card card--kant', attrs: { role: 'dialog', 'aria-modal': 'true', 'aria-labelledby': 'kant-titulo' } }, [
+    const card = h('div', { className: 'card card--kant', attrs: { role: 'dialog', 'aria-modal': 'true', 'aria-labelledby': 'kant-titulo', 'aria-describedby': 'kant-citacao' } }, [
       h('h1', { className: 'kant__titulo', text: title, attrs: { id: 'kant-titulo' } }),
-      h('blockquote', { className: 'kant__citacao' }, [
+      h('blockquote', { className: 'kant__citacao', attrs: { id: 'kant-citacao' } }, [
         h('p', { text: `“${fragmentos.join(' […] ')}”` }),
         h('footer', {}, [h('span', { text: t('kant.assinatura') }), h('small', { text: t('kant.traducao') })]),
       ]),
@@ -26,6 +26,8 @@ export function showKantCard(screen: HTMLElement, title: string, key: string): P
       resolve();
     });
     screen.append(card);
-    button.focus();
+    // Abre no topo: o foco no botão não pode rolar o título para fora da tela.
+    button.focus({ preventScroll: true });
+    card.scrollTop = 0;
   });
 }

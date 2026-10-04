@@ -4,6 +4,8 @@ import { comfortKey } from '../comfort';
 import type { CharacterId } from '../../tags/protocol';
 
 export class Phone {
+  /** Moldura inteira: telas sobrepostas que não pertencem à história (ex.: Sobre) ficam aqui, fora de `screen`. */
+  readonly root: HTMLElement;
   readonly screen: HTMLElement;
   private readonly clock: HTMLElement;
   private readonly comfort: HTMLElement;
@@ -17,7 +19,8 @@ export class Phone {
     const about = h('button', { className: 'status__sobre', text: t('sobre.botao'), attrs: { type: 'button' } });
     about.addEventListener('click', () => onAbout(about));
     const status = h('header', { className: 'status' }, [this.clock, this.comfort, about]);
-    host.replaceChildren(h('div', { className: 'phone' }, [status, this.banner, this.screen]));
+    this.root = h('div', { className: 'phone' }, [status, this.banner, this.screen]);
+    host.replaceChildren(this.root);
   }
 
   setTime(time: string): void {

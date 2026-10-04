@@ -33,3 +33,12 @@ describe('analytics', () => {
     expect(() => createAnalytics(e).track('inicio')).not.toThrow();
   });
 });
+
+describe('chapterEvent', () => {
+  it('usa os nomes da spec para início e epílogo', async () => {
+    const { chapterEvent } = await import('../src/analytics');
+    expect(chapterEvent('cap0')).toBe('inicio');
+    expect(chapterEvent('cap3')).toBe('cap3');
+    expect(chapterEvent('cap5')).toBe('epilogo');
+  });
+});

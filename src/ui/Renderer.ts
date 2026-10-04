@@ -1,4 +1,4 @@
-import type { Analytics } from '../analytics';
+import { chapterEvent, type Analytics } from '../analytics';
 import type { Checkpoint, StoryEngine, StoryStep } from '../engine/StoryEngine';
 import type { AppId } from '../tags/protocol';
 import type { AppView } from './apps/AppView';
@@ -13,6 +13,8 @@ export interface RendererOptions {
   onRestart(): void;
   onError(error: unknown): void;
   analytics: Analytics;
+  /** O jogo foi retomado de um save: o primeiro capítulo exibido não conta de novo na analítica. */
+  resumed?: boolean;
 }
 
 /** Leva cada passo da história para a tela: cartões, notificações, linhas nos apps e escolhas. */
@@ -22,12 +24,14 @@ export class Renderer {
   private savedCheckpoint: Checkpoint | null = null;
   /** Há falas na tela que o jogador ainda não teve chance de ler antes de uma troca de cena? */
   private unread = false;
+  private skipChapterEvent: boolean;
 
   constructor(
     private readonly phone: Phone,
     private readonly engine: StoryEngine,
     private readonly options: RendererOptions,
   ) {
+    this.skipChapterEvent = options.resumed ?? false;
     this.phone.setComfort(this.engine.getNumber('conforto'));
   }
 
@@ -78,7 +82,8 @@ export class Renderer {
     this.unread = false;
     this.phone.screen.replaceChildren();
     this.phone.clearNotification();
-    this.options.analytics.track(chapter);
+    if (this.skipChapterEvent) this.skipChapterEvent = false;
+    else this.options.analytics.track(chapterEvent(chapter));
   }
 
   private async advance(next: () => StoryStep): Promise<void> {

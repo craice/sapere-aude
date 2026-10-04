@@ -26,11 +26,12 @@ Melhor não se expor. Quer que eu arquive a mensagem da Bia e publique a portari
   O seu post teve 3 curtidas e 41 respostas furiosas. Ninguém discutiu o horário da biblioteca. # notify: amparo
   Vi o seu post. A portaria já foi publicada por outra pessoa. Podemos conversar amanhã? # from: celia
   -> classificador
-* [Publicar a portaria e, à noite, escrever um texto público em seu próprio nome #pensar]
+* [Publicar a portaria, responder à Bia e, à noite, escrever em seu próprio nome #pensar]
   -> carta
 
 = carta
 ~ fichas_coletadas = 0
+Publiquei, é a minha função. Mas hoje à noite vou escrever sobre isso, em meu nome. # from: eu
 Tudo bem… mas cuidado com o que você escreve, hein. 😬 # notify: amparo
 Terça-feira, à noite # app: narrativa # title # time: 21:15
 Às 17h você publicou a portaria, como pede o seu cargo. Os cartazes foram para a gráfica.
@@ -57,26 +58,44 @@ Escolha os argumentos que vão sustentar a sua carta. Ela será assinada com o s
   ~ arg_proposta = true
   ~ fichas_coletadas++
   -> argumentos
-+ {fichas_coletadas >= 2} [Publicar a carta aberta #compor]
-  -> publicar
+* [O valor economizado pode ampliar o horário aos sábados. #ficha]
+  ~ arg_sabado = true
+  ~ fichas_coletadas++
+  -> argumentos
+* [Abrir até as 22h exige segurança extra na praça. #ficha]
+  ~ arg_seguranca = true
+  ~ fichas_coletadas++
+  -> argumentos
++ {fichas_coletadas >= 2} [Escrever a conclusão da carta #compor]
+  -> posicao
 + [Deixar para outro dia #sugestao]
   ~ registrar("cap3_ordem", "recuou_medo")
   Melhor assim. Amanhã você nem vai lembrar disso. 😊 # notify: amparo
   -> classificador
+
+= posicao
+E a sua conclusão? # app: leitor
+* [Peço que a decisão seja revista.]
+  ~ posicao_cap3 = "revisao"
+* [Apoio a mudança, desde que haja uma audiência pública.]
+  ~ posicao_cap3 = "condicional"
+* [Apoio a mudança.]
+  ~ posicao_cap3 = "apoio"
+- -> publicar
 
 = publicar
 ~ registrar("cap3_ordem", "pensou")
 ~ cap3_escreveu = true
 ~ ajustar_conforto(-10)
 Carta aberta: a biblioteca à noite # app: narrativa # title
-Moro no bairro e escrevo aqui em meu próprio nome, não em nome do meu cargo.{arg_uso: Segundo a própria Secretaria, 40% dos empréstimos acontecem depois das 18h: quem usa a biblioteca à noite é quem trabalha de dia.}{arg_orcamento: A economia prevista equivale a 0,3% do orçamento da Cultura.}{arg_consulta: A decisão foi tomada sem ouvir quem usa a biblioteca.}{arg_proposta: Proponho uma audiência pública antes de qualquer mudança.} Peço que a decisão seja revista.
+Moro no bairro e escrevo aqui em meu próprio nome, não em nome do meu cargo.{arg_uso: Segundo a própria Secretaria, 40% dos empréstimos acontecem depois das 18h: quem usa a biblioteca à noite é quem trabalha de dia.}{arg_orcamento: A economia prevista equivale a 0,3% do orçamento da Cultura.}{arg_consulta: A decisão foi tomada sem ouvir quem usa a biblioteca.}{arg_proposta: Proponho uma audiência pública antes de qualquer mudança.}{arg_sabado: O valor economizado pode ampliar o horário aos sábados.}{arg_seguranca: Abrir até as 22h exige segurança extra na praça.}{posicao_cap3 == "revisao": Peço que a decisão seja revista.}{posicao_cap3 == "condicional": Apoio a mudança, desde que haja uma audiência pública.}{posicao_cap3 == "apoio": Apoio a mudança.}
 Você publica. Na Secretaria, amanhã, você vai continuar cumprindo a sua função — e ninguém pode te impedir de argumentar em público.
-vc escreveu na Folha!! 😮 vou compartilhar # from: bia
+{posicao_cap3 == "apoio": vc escreveu na Folha!! 😮 não concordo, mas vou compartilhar: pelo menos tem argumento|vc escreveu na Folha!! 😮 vou compartilhar} # from: bia
 -> classificador
 
 = classificador
 Uso público, uso privado # app: narrativa # title # time: 21:40
-Kant tem um nome estranho para o que acabou de acontecer.
+Kant tem um nome estranho para a diferença entre o que se faz no cargo e o que se diz em público.
 Para ele, uso PRIVADO da razão é o que você faz num cargo ou função — mesmo que seja um cargo público. Ali, é preciso cumprir a função.
 Uso PÚBLICO é quando você fala em seu próprio nome, por escrito, para qualquer pessoa que queira ler. Esse, dizia Kant, deve ser sempre livre.
 Vamos testar? Toque onde cada caso se encaixa.
