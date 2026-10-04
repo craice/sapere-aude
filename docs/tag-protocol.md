@@ -15,18 +15,20 @@ O roteiro (Ink) controla a interface do celular por meio de **tags**. Este é o 
    * [Enviar] #sugestao     ❌
    ```
 
-O caractere `|` não pode aparecer dentro de tags.
+O caractere `|` não pode aparecer dentro de tags. O caractere `#` não pode aparecer no texto (ele inicia uma tag).
 
 ## Tags de linha
 
 | Tag | Valor | Efeito |
 |---|---|---|
-| `# app: X` | `setup`, `chat`, `leitor`, `fim` | Troca o app em tela. **Vale desta linha em diante.** |
+| `# app: X` | `setup`, `chat`, `leitor`, `narrativa`, `retrato`, `texto`, `fim` | Troca o app em tela. **Vale desta linha em diante.** No `retrato`, a primeira linha é o título e a linha do tempo das decisões aparece logo abaixo. No `texto`, a linha introduz o texto completo de Kant. |
 | `# time: HH:MM` | ex.: `07:42` | Muda o relógio. **Vale desta linha em diante.** |
-| `# from: X` | `amparo`, `bia`, `eu`, `folha` | No chat/configuração: autor da mensagem. No leitor: nome do veículo (cabeçalho). |
+| `# from: X` | `amparo`, `bia`, `eu`, `folha`, `vidafit`, `resumao`, `guru`, `celia`, `arnaldo`, `duda`, `liberta` | No chat/configuração/narrativa: autor da fala. No leitor: nome do veículo (cabeçalho). |
 | `# notify: X` | idem | A linha aparece como notificação de X. |
 | `# chapter: X` | nome do knot (ex.: `cap1`) | Mostra o cartão de capítulo com o texto da linha e cria um ponto de salvamento. **Deve ser a primeira linha do knot.** |
-| `# title` | — | No leitor: a linha é a manchete. |
+| `# title` | — | No leitor: a linha é a manchete. Na narrativa: subtítulo da cena. |
+| `# kant: capN` | `cap1`…`cap4` | Cartão de citação: o texto da linha é o título; a citação vem de `content/<idioma>/kant/trechos.json`. |
+| `# evento: nome` | letras minúsculas, números e `_` | Conta um evento anônimo na analítica (se estiver ligada). A linha é exibida normalmente. |
 
 Uma linha pode ter várias tags: `Manhã # chapter: cap1 # app: chat # time: 07:42`.
 Uma linha não pode ter `from` e `notify` juntos, nem a mesma tag duas vezes.
@@ -49,4 +51,8 @@ Uma linha que sai vazia (ex.: condicional falsa) **não pode** ter tags — use 
 | `conforto` (0–100) | Widget do Amparo na barra de status. Altere com `~ ajustar_conforto(delta)`. |
 | `momentos` | Registro das decisões. **Nunca altere diretamente**: use `~ registrar("id_unico", "tipo")`. |
 
-Tipos de momento: `pensou`, `delegou_comodidade`, `recuou_medo`, `rompeu_sem_pensar`, `delegou_com_razao`. Cada `id` deve ser registrado **uma única vez** por partida.
+Tipos de momento: `pensou`, `delegou_comodidade`, `recuou_medo`, `rompeu_sem_pensar`, `delegou_com_razao`. Cada `id` deve ser registrado **uma única vez** por partida e ter um rótulo na função `rotulo_momento(id)` (usado no retrato).
+
+## Eventos de analítica
+
+Capítulos (`cap0`…`cap5`) são contados automaticamente. O roteiro também emite: `padrao_pensou`, `padrao_comodidade`, `padrao_medo`, `padrao_rompeu`, `amparo_sugerir`, `leu_kant` (recusou o resumo e leu) e `leu_kant_depois` (aceitou o resumo e leu mesmo assim).

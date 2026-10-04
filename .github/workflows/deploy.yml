@@ -10,9 +10,10 @@ on:
 permissions:
   contents: read
 
+# PRs cancelam execuções antigas do mesmo PR; pushes na main nunca cancelam uma publicação em andamento.
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
-  cancel-in-progress: true
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
 
 jobs:
   build:
@@ -29,7 +30,11 @@ jobs:
       - run: npm test
       - run: npx playwright install --with-deps chromium
       - run: npm run test:e2e
+      # Build de publicação, separado do build dos testes: só ele recebe a URL da analítica
+      # (variável do repositório GOATCOUNTER_URL; vazia = analítica desligada).
       - run: npm run build
+        env:
+          VITE_GOATCOUNTER_URL: ${{ vars.GOATCOUNTER_URL }}
       - uses: actions/upload-pages-artifact@fc324d3547104276b827a68afc52ff2a11cc49c9 # v5.0.0
         with:
           path: dist

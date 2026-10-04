@@ -28,10 +28,15 @@ export function openAbout(screen: HTMLElement, options: { onRestart(): void; ret
   painel.addEventListener('keydown', (event) => {
     if (event.key === 'Escape') close();
   });
-  fechar.addEventListener('click', close);
+  armButton(fechar);
+  armButton(recomecar);
+  fechar.addEventListener('click', () => {
+    if (isArmed(fechar)) close();
+  });
 
   let confirmando = false;
   recomecar.addEventListener('click', () => {
+    if (!isArmed(recomecar)) return;
     if (!confirmando) {
       confirmando = true;
       recomecar.textContent = t('sobre.confirmar');
@@ -40,7 +45,6 @@ export function openAbout(screen: HTMLElement, options: { onRestart(): void; ret
       armButton(recomecar);
       return;
     }
-    if (!isArmed(recomecar)) return;
     painel.remove();
     options.onRestart();
   });

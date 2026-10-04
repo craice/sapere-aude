@@ -17,6 +17,34 @@ async function enter(page: Page, name: string) {
   await page.keyboard.press('Enter');
 }
 
+const ACEITAR = ['.choice--sugestao', '.card__continuar', '.choice--continuar'];
+const PENSAR = ['.choice--pensar', '.ficha', '.choice--compor', '.card__continuar', '.choice--continuar'];
+
+/**
+ * Jogador automático: a cada passo toca no primeiro botão pronto que casar com as preferências
+ * (ou no primeiro botão pronto). Para quando `ate` aparecer.
+ */
+async function jogarAte(page: Page, preferencias: string[], ate: string, limite = 150) {
+  const alvo = page.getByRole('heading', { name: ate });
+  for (let i = 0; i < limite; i++) {
+    if (await alvo.isVisible()) return;
+    const prontos = page.locator('button[data-pronto]:not([disabled])');
+    await Promise.race([prontos.first().waitFor(), alvo.waitFor()]);
+    if (await alvo.isVisible()) return;
+    let tocou = false;
+    for (const seletor of preferencias) {
+      const botao = page.locator(`${seletor}[data-pronto]:not([disabled])`).first();
+      if (await botao.count()) {
+        await botao.click();
+        tocou = true;
+        break;
+      }
+    }
+    if (!tocou) await prontos.first().click();
+  }
+  throw new Error(`Não chegou a "${ate}"`);
+}
+
 async function continuar(page: Page, titulo: string) {
   await expect(page.getByRole('heading', { name: titulo })).toBeVisible();
   await tocar(page, 'Continuar');
@@ -30,7 +58,7 @@ async function configurarAceitandoTudo(page: Page) {
   await tocar(page, 'Continuar');
 }
 
-test('aceitar tudo: do início à tela final', async ({ page }) => {
+test('capítulo 1 aceitando tudo termina no cartão de Kant', async ({ page }) => {
   await page.goto('./');
   await configurarAceitandoTudo(page);
   await continuar(page, 'Manhã');
@@ -38,10 +66,60 @@ test('aceitar tudo: do início à tela final', async ({ page }) => {
   await tocar(page, 'Enviar a sugestão do Amparo');
   await expect(page.locator('.msg--eu')).toContainText('A prefeitura sabe o que faz');
   await expect(page.getByText('sei lá, achei que vc fosse ter uma opinião mais sua kkk')).toBeVisible();
-  await tocar(page, 'Continuar');
-  await expect(page.getByRole('heading', { name: 'Fim do capítulo 1' })).toBeVisible();
   await expect(page.getByText('Seu dia está 😊 tranquilo')).toBeVisible();
+  await tocar(page, 'Continuar');
+  await expect(page.getByRole('heading', { name: 'Isso foi o que Kant chamou de menoridade autoimposta.' })).toBeVisible();
+  await expect(page.locator('.kant__citacao')).toContainText('Sapere aude!');
+  await tocar(page, 'Continuar');
+  await expect(page.getByRole('heading', { name: 'Tarde' })).toBeVisible();
+});
+
+test('jogo completo aceitando tudo: chega à tela final com Recomeçar', async ({ page }) => {
+  test.setTimeout(90_000);
+  await page.goto('./');
+  await jogarAte(page, ACEITAR, 'Sapere aude!');
   await expect(page.getByRole('button', { name: 'Recomeçar' })).toBeVisible();
+});
+
+test('retrato: mostra as 7 decisões e a leitura do padrão', async ({ page }) => {
+  test.setTimeout(90_000);
+  await page.goto('./');
+  await jogarAte(page, ACEITAR, 'Seu dia, visto de cima');
+  await expect(page.locator('.retrato__momento')).toHaveCount(7);
+  await expect(page.locator('.retrato__momento').first()).toContainText('Manhã — responder à Bia sobre a biblioteca');
+  await expect(page.getByText('Você delegou mais por comodidade do que por medo.', { exact: false })).toBeVisible();
+});
+
+test('jogo completo pensando: recusa o resumo, lê o texto de Kant e termina', async ({ page }) => {
+  test.setTimeout(90_000);
+  await page.goto('./');
+  await jogarAte(page, PENSAR, 'Resposta à pergunta: O que é Esclarecimento?');
+  await expect(page.locator('.texto__artigo')).toContainText('Esclarecimento é a saída do ser humano da menoridade');
+  await expect(page.locator('.texto__artigo')).toContainText('assistida por IA');
+  await jogarAte(page, PENSAR, 'Sapere aude!');
+});
+
+test('Sobre: mostra créditos e recomeça só depois de confirmar', async ({ page }) => {
+  await page.goto('./');
+  await continuar(page, 'Configuração');
+  await page.getByRole('button', { name: 'Sobre' }).click();
+  await expect(page.getByRole('heading', { name: 'Sobre o jogo' })).toBeVisible();
+  await expect(page.getByRole('link', { name: 'Código e conteúdo no GitHub' })).toHaveAttribute('href', 'https://github.com/craice/sapere-aude');
+  await page.keyboard.press('Escape');
+  await expect(page.getByRole('heading', { name: 'Sobre o jogo' })).toHaveCount(0);
+  await page.getByRole('button', { name: 'Sobre' }).click();
+  await tocar(page, 'Recomeçar do início');
+  await expect(page.getByRole('heading', { name: 'Sobre o jogo' })).toBeVisible();
+  await tocar(page, 'Tem certeza? Sim, apagar o progresso e recomeçar');
+  await expect(page.getByRole('heading', { name: 'Configuração' })).toBeVisible();
+});
+
+test('recarregar num capítulo posterior retoma nele', async ({ page }) => {
+  test.setTimeout(60_000);
+  await page.goto('./');
+  await jogarAte(page, ACEITAR, 'Trabalho');
+  await page.reload();
+  await expect(page.getByRole('heading', { name: 'Trabalho' })).toBeVisible();
 });
 
 test('o relógio só avança para a hora do capítulo seguinte depois da pausa de leitura', async ({ page }) => {
@@ -127,7 +205,7 @@ test('toque duplo numa escolha envia uma única mensagem', async ({ page }) => {
   await expect(page.getByText('sei lá, achei que vc fosse ter uma opinião mais sua kkk')).toBeVisible();
   await expect(page.locator('.msg--eu')).toHaveCount(1);
   await tocar(page, 'Continuar');
-  await expect(page.getByRole('heading', { name: 'Fim do capítulo 1' })).toBeVisible();
+  await expect(page.getByRole('heading', { name: 'Isso foi o que Kant chamou de menoridade autoimposta.' })).toBeVisible();
 });
 
 test('toque duplo em "Sim, claro!" não escolhe também a opção seguinte', async ({ page }) => {
