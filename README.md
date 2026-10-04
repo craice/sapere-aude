@@ -2,6 +2,8 @@
 
 *Um jogo sobre o que Kant chamou de Esclarecimento.*
 
+**Jogue agora:** https://craice.github.io/sapere-aude/
+
 Jogo sério, gratuito e de código aberto, baseado em *Resposta à pergunta: O que é Esclarecimento?* (Immanuel Kant, 1784). O jogo inteiro acontece na tela de um celular, onde vive o **Amparo** — um assistente simpático que decide quase tudo por você.
 
 ## Rodar localmente
