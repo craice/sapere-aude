@@ -1,0 +1,17 @@
+{
+  "personagem.amparo": "Amparo",
+  "personagem.bia": "Bia",
+  "personagem.eu": "Você",
+  "personagem.folha": "Folha do Bairro",
+  "conforto.tranquilo": "Seu dia está 😊 tranquilo",
+  "conforto.ok": "Seu dia está 🙂 ok",
+  "conforto.agitado": "Seu dia está 😬 agitado",
+  "digitando": "{nome} está digitando…",
+  "chat.titulo": "Mensagens",
+  "escolhas.rotulo": "Suas opções",
+  "capitulo.continuar": "Continuar",
+  "leitor.dica": "Toque nos trechos que parecerem importantes para guardá-los como fichas.",
+  "leitor.fichas": "Fichas guardadas: {n}",
+  "fim.recomecar": "Recomeçar",
+  "erro.roteiro": "Algo deu errado no roteiro. Desculpe!"
+}
