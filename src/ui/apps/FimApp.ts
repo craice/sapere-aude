@@ -1,6 +1,6 @@
 import type { StoryChoice, StoryLine } from '../../engine/StoryEngine';
 import { t } from '../../i18n';
-import { createChoiceButtons, focusPreferred, waitForContinue } from '../choices';
+import { armButton, createChoiceButtons, focusPreferred, isArmed, waitForContinue } from '../choices';
 import { h } from '../dom';
 import type { AppView } from './AppView';
 
@@ -33,7 +33,12 @@ export class FimApp implements AppView {
 
   showEnd(onRestart: () => void): void {
     const button = h('button', { className: 'choice choice--sugestao', text: t('fim.recomecar'), attrs: { type: 'button' } });
-    button.addEventListener('click', onRestart, { once: true });
+    armButton(button);
+    button.addEventListener('click', () => {
+      if (!isArmed(button) || button.disabled) return;
+      button.disabled = true;
+      onRestart();
+    });
     this.choices.replaceChildren(button);
     button.focus();
   }

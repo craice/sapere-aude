@@ -126,6 +126,10 @@ html, body {
 }
 
 .choice:disabled { opacity: 0.5; cursor: default; }
+.choice:not([data-pronto]), .card__continuar:not([data-pronto]) { opacity: 0.6; }
+@media (prefers-reduced-motion: no-preference) {
+  .choice, .card__continuar { transition: opacity 200ms ease-out; }
+}
 .choice:focus-visible, .card__continuar:focus-visible { outline: 3px solid var(--amparo); outline-offset: 2px; }
 
 .choice--sugestao {

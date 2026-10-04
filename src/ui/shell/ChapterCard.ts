@@ -1,3 +1,4 @@
+import { armButton, isArmed } from '../choices';
 import { h } from '../dom';
 import { t } from '../../i18n';
 
@@ -9,10 +10,12 @@ export function showChapterCard(screen: HTMLElement, title: string): Promise<voi
       h('h1', { className: 'card__titulo', text: title, attrs: { id: 'card-titulo' } }),
       button,
     ]);
+    armButton(button);
     button.addEventListener('click', () => {
+      if (!isArmed(button) || !card.isConnected) return;
       card.remove();
       resolve();
-    }, { once: true });
+    });
     screen.append(card);
     button.focus();
   });

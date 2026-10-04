@@ -12,8 +12,9 @@ export function createChoiceButtons(choices: StoryChoice[], onPick: PickHandler)
   let picked = false;
   const buttons = choices.map((choice) => {
     const button = h('button', { className: `choice choice--${choice.kind}`, text: choice.text, attrs: { type: 'button' } });
-    button.addEventListener('click', (event) => {
-      if (picked || isRepeatClick(event)) return;
+    armButton(button);
+    button.addEventListener('click', () => {
+      if (picked || !isArmed(button)) return;
       picked = true;
       for (const b of buttons) b.disabled = true;
       onPick(choice.index);
@@ -23,20 +24,34 @@ export function createChoiceButtons(choices: StoryChoice[], onPick: PickHandler)
   return buttons;
 }
 
+/** Tempo em que um botão recém-exibido ignora ativações. */
+export const ARM_DELAY_MS = 300;
+
 /**
- * O segundo clique de um duplo toque (detail ≥ 2) cairia no botão que acabou de aparecer
- * no mesmo lugar e escolheria sem querer. Teclado (detail 0) e cliques simples (1) passam.
+ * Um botão novo costuma surgir no lugar do anterior. Sem esta trava, o segundo toque de um
+ * toque duplo, um Enter duplo ou uma tecla segurada escolheriam sem querer. O botão só aceita
+ * ativação depois de `data-pronto` (não é animação: vale também com movimento reduzido)
+ * e nunca por repetição automática de tecla.
  */
-function isRepeatClick(event: MouseEvent): boolean {
-  return event.detail >= 2;
+export function armButton(button: HTMLButtonElement): void {
+  setTimeout(() => button.setAttribute('data-pronto', ''), ARM_DELAY_MS);
+  // Tecla segurada: a repetição automática não pode ativar o botão.
+  button.addEventListener('keydown', (event) => {
+    if (event.repeat && (event.key === 'Enter' || event.key === ' ')) event.preventDefault();
+  });
+}
+
+export function isArmed(button: HTMLButtonElement): boolean {
+  return button.hasAttribute('data-pronto');
 }
 
 /** Pausa de leitura: mostra "Continuar" no lugar das escolhas e resolve quando o jogador toca. */
 export function waitForContinue(container: HTMLElement): Promise<void> {
   return new Promise((resolve) => {
     const button = h('button', { className: 'choice choice--continuar', text: t('capitulo.continuar'), attrs: { type: 'button' } });
-    button.addEventListener('click', (event) => {
-      if (isRepeatClick(event) || button.disabled) return;
+    armButton(button);
+    button.addEventListener('click', () => {
+      if (!isArmed(button) || button.disabled) return;
       button.disabled = true;
       container.replaceChildren();
       resolve();
