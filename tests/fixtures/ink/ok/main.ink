@@ -1,0 +1,2 @@
+INCLUDE parte.ink
+-> parte
