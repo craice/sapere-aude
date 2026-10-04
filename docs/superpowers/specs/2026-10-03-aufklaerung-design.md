@@ -1,9 +1,10 @@
-# Ouse saber — Especificação de design
+# Sapere Aude — Especificação de design
 
 > *Um jogo sobre o que Kant chamou de Esclarecimento.*
 
 - **Data:** 2026-10-03
-- **Status:** aguardando revisão
+- **Status:** aprovado
+- **Título:** *Sapere Aude* (em latim; tradução "Ouse saber!" explicada no jogo)
 - **Texto-base:** Immanuel Kant, *Beantwortung der Frage: Was ist Aufklärung?* (*Berlinische Monatsschrift*, dezembro de 1784)
 
 ---
