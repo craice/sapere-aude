@@ -28,7 +28,13 @@ export class Phone {
     this.comfort.textContent = t(comfortKey(value));
   }
 
-  /** Mostra a notificação no topo; ela fica até a próxima. */
+  /** Some com a notificação atual (ex.: ao começar um capítulo). */
+  clearNotification(): void {
+    this.banner.replaceChildren();
+    this.banner.classList.remove('banner--visivel', 'banner--entrando');
+  }
+
+  /** Mostra a notificação no topo; ela fica até a próxima ou até o próximo capítulo. */
   async notify(from: CharacterId, text: string): Promise<void> {
     this.banner.replaceChildren(h('strong', { className: 'banner__de', text: characterName(from) }), h('span', { text }));
     this.banner.classList.remove('banner--entrando');

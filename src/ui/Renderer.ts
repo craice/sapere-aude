@@ -77,6 +77,7 @@ export class Renderer {
     this.current = null;
     this.unread = false;
     this.phone.screen.replaceChildren();
+    this.phone.clearNotification();
     this.options.analytics.track(chapter);
   }
 

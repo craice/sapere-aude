@@ -86,6 +86,7 @@ test('retrato: mostra as 7 decisões e a leitura do padrão', async ({ page }) =
   await page.goto('./');
   await jogarAte(page, ACEITAR, 'Seu dia, visto de cima');
   await expect(page.locator('.retrato__momento')).toHaveCount(7);
+  await expect(page.locator('.banner')).not.toContainText('Liberta');
   await expect(page.locator('.retrato__momento').first()).toContainText('Manhã — responder à Bia sobre a biblioteca');
   await expect(page.getByText('Você delegou mais por comodidade do que por medo.', { exact: false })).toBeVisible();
 });
