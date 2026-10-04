@@ -194,3 +194,59 @@ html, body {
 .fim__texto p { color: var(--texto-suave); line-height: 1.5; }
 
 .fatal { color: var(--tela); text-align: center; padding: 24px; max-width: 360px; }
+
+/* Barra de status: botão Sobre */
+.status { align-items: center; flex-wrap: wrap; }
+.status__conforto { flex: 1; text-align: right; }
+.status__sobre {
+  font: inherit; font-size: 12px; font-weight: 600; color: var(--texto-suave);
+  background: none; border: 1px solid var(--linha); border-radius: 999px; padding: 2px 10px; cursor: pointer;
+}
+.status__sobre:focus-visible { outline: 3px solid var(--amparo); outline-offset: 2px; }
+
+/* Narrativa */
+.app--narrativa { background: #fbfaf7; }
+.narrativa__texto p { font-family: var(--leitura); font-size: 17px; line-height: 1.55; margin: 0 0 12px; }
+.narrativa__titulo { font-size: 15px; text-transform: uppercase; letter-spacing: 0.04em; color: var(--texto-suave); margin: 8px 0 12px; }
+.narrativa__fala strong { font-family: var(--fonte); font-size: 14px; }
+.narrativa__fala--amparo strong { color: var(--amparo); }
+
+/* Cartão de Kant */
+.card--kant { justify-content: center; gap: 20px; overflow-y: auto; }
+.kant__titulo { font-family: var(--leitura); font-weight: 400; font-size: 24px; line-height: 1.25; margin: 0; text-align: center; }
+.kant__citacao { margin: 0; padding: 0 0 0 14px; border-left: 3px solid #9d93ff; font-family: var(--leitura); font-size: 16px; line-height: 1.5; }
+.kant__citacao p { margin: 0 0 10px; }
+.kant__citacao footer { display: flex; flex-direction: column; font-family: var(--fonte); font-size: 13px; opacity: 0.85; }
+
+/* Retrato */
+.app--retrato { background: #fbfaf7; }
+.retrato__titulo { font-family: var(--leitura); font-weight: 400; font-size: 28px; margin: 8px 0 12px; }
+.retrato__titulo:focus { outline: none; }
+.retrato__linha { list-style: none; margin: 0 0 16px; padding: 0 0 0 14px; border-left: 2px solid var(--linha); display: flex; flex-direction: column; gap: 10px; }
+.retrato__momento { display: flex; flex-direction: column; gap: 2px; }
+.retrato__rotulo { font-weight: 600; font-size: 15px; }
+.retrato__tipo { font-size: 13px; color: var(--texto-suave); }
+.retrato__momento--pensou .retrato__tipo { color: var(--eu); }
+.retrato__momento--delegou_com_razao .retrato__tipo { color: #2b6cb0; }
+.retrato__momento--rompeu_sem_pensar .retrato__tipo { color: #b7791f; }
+.retrato__leitura { font-family: var(--leitura); font-size: 17px; line-height: 1.55; margin: 0 0 12px; }
+
+/* Texto de Kant */
+.app--texto { background: #fff; }
+.texto__intro p { font-size: 14px; color: var(--texto-suave); margin: 4px 0 12px; }
+.texto__artigo { font-family: var(--leitura); font-size: 16px; line-height: 1.6; }
+.texto__artigo h1 { font-size: 24px; line-height: 1.2; }
+.texto__artigo h1:focus { outline: none; }
+.texto__artigo blockquote { margin: 0 0 12px; padding: 8px 12px; background: var(--tela); border-radius: 10px; font-family: var(--fonte); font-size: 13px; line-height: 1.45; }
+.texto__artigo p { margin: 0 0 14px; }
+.texto__artigo hr { border: none; border-top: 1px solid var(--linha); margin: 20px 0; }
+.leitor__manchete:focus { outline: none; }
+
+/* Sobre */
+.sobre { justify-content: flex-start; align-items: stretch; gap: 0; overflow-y: auto; text-align: left; font-size: 15px; line-height: 1.45; }
+.sobre__titulo { font-family: var(--leitura); font-weight: 400; font-size: 28px; margin: 8px 0 12px; }
+.sobre p { margin: 0 0 10px; }
+.sobre a { color: #c9c3ff; }
+.sobre__privacidade { font-size: 13px; opacity: 0.85; }
+.sobre .choices { margin-top: 16px; }
+.choice--perigo { background: #b42318; border-color: #b42318; color: #fff; text-align: center; }

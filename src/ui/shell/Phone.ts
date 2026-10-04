@@ -9,12 +9,14 @@ export class Phone {
   private readonly comfort: HTMLElement;
   private readonly banner: HTMLElement;
 
-  constructor(host: HTMLElement) {
+  constructor(host: HTMLElement, onAbout: (button: HTMLElement) => void) {
     this.clock = h('span', { className: 'status__relogio' });
     this.comfort = h('span', { className: 'status__conforto' });
     this.banner = h('div', { className: 'banner', attrs: { role: 'status', 'aria-live': 'polite' } });
     this.screen = h('div', { className: 'phone__tela' });
-    const status = h('header', { className: 'status' }, [this.clock, this.comfort]);
+    const about = h('button', { className: 'status__sobre', text: t('sobre.botao'), attrs: { type: 'button' } });
+    about.addEventListener('click', () => onAbout(about));
+    const status = h('header', { className: 'status' }, [this.clock, this.comfort, about]);
     host.replaceChildren(h('div', { className: 'phone' }, [status, this.banner, this.screen]));
   }
 

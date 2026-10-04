@@ -109,6 +109,40 @@ describe('StoryEngine', () => {
     expect(() => engine.getMoments()).toThrow(/inventado/);
   });
 
+  it('describeMoments: junta tipo e rótulo vindo da função Ink rotulo_momento', () => {
+    const json = compileSource(`${HEADER}~ registrar("cap1_bia", "pensou")
+~ registrar("cap2_x", "recuou_medo")
+Oi
+-> END
+${FUNCOES}
+=== function rotulo_momento(id) ===
+{ id:
+  - "cap1_bia":
+    ~ return "Responder à Bia"
+  - "cap2_x":
+    ~ return "Ir à reunião"
+  - else:
+    ~ return ""
+}
+`);
+    const engine = new StoryEngine(json);
+    engine.start();
+    expect(engine.describeMoments()).toEqual([
+      { id: 'cap1_bia', type: 'pensou', label: 'Responder à Bia' },
+      { id: 'cap2_x', type: 'recuou_medo', label: 'Ir à reunião' },
+    ]);
+  });
+
+  it('describeMoments falha se faltar rótulo para algum momento', () => {
+    const json = compileSource(`${HEADER}~ registrar("sem_rotulo", "pensou")\nOi\n-> END\n${FUNCOES}
+=== function rotulo_momento(id) ===
+~ return ""
+`);
+    const engine = new StoryEngine(json);
+    engine.start();
+    expect(() => engine.describeMoments()).toThrow(/sem_rotulo/);
+  });
+
   it('getNumber falha para variável inexistente', () => {
     const engine = new StoryEngine(UM_CAPITULO);
     expect(() => engine.getNumber('nao_existe')).toThrow(/nao_existe/);

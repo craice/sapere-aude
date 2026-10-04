@@ -40,6 +40,14 @@ export function parseLineTags(tags: readonly string[]): LineMeta {
         if (!value || !/^[a-z0-9_]+$/.test(value)) throw new TagError(`Capítulo inválido em "# ${tag}" (use o nome do knot, ex.: cap1)`);
         meta.chapter = value;
         break;
+      case 'kant':
+        if (!value || !/^cap\d+$/.test(value)) throw new TagError(`Cartão de Kant inválido em "# ${tag}" (use cap1, cap2…)`);
+        meta.kant = value;
+        break;
+      case 'evento':
+        if (!value || !/^[a-z0-9_]+$/.test(value)) throw new TagError(`Evento inválido em "# ${tag}" (use letras minúsculas, números e _)`);
+        meta.evento = value;
+        break;
       case 'title':
         if (value !== undefined) throw new TagError(`"# title" não leva valor`);
         meta.title = true;

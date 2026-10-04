@@ -1,15 +1,18 @@
+import type { Analytics } from '../analytics';
 import type { Checkpoint, StoryEngine, StoryStep } from '../engine/StoryEngine';
 import type { AppId } from '../tags/protocol';
 import type { AppView } from './apps/AppView';
 import { createApp } from './apps/createApp';
 import { FimApp } from './apps/FimApp';
 import { showChapterCard } from './shell/ChapterCard';
+import { showKantCard } from './shell/KantCard';
 import type { Phone } from './shell/Phone';
 
 export interface RendererOptions {
   onCheckpoint(checkpoint: Checkpoint): void;
   onRestart(): void;
   onError(error: unknown): void;
+  analytics: Analytics;
 }
 
 /** Leva cada passo da história para a tela: cartões, notificações, linhas nos apps e escolhas. */
@@ -32,11 +35,16 @@ export class Renderer {
     try {
       this.phone.setComfort(this.engine.getNumber('conforto'));
       for (const line of step.lines) {
+        if (line.meta.evento) this.options.analytics.track(line.meta.evento);
         if (line.meta.chapter) {
           this.saveCheckpoint();
           await this.pauseIfUnread();
           this.phone.setTime(line.time);
           await showChapterCard(this.phone.screen, line.text);
+          this.startChapter(line.meta.chapter);
+        } else if (line.meta.kant) {
+          await this.pauseIfUnread();
+          await showKantCard(this.phone.screen, line.text, line.meta.kant);
         } else if (line.meta.notify) {
           this.phone.setTime(line.time);
           await this.phone.notify(line.meta.notify, line.text);
@@ -61,6 +69,15 @@ export class Renderer {
     } catch (error) {
       this.options.onError(error);
     }
+  }
+
+  /** Cada capítulo começa com telas novas (nenhuma matéria, conversa ou contagem herdada). */
+  private startChapter(chapter: string): void {
+    this.apps.clear();
+    this.current = null;
+    this.unread = false;
+    this.phone.screen.replaceChildren();
+    this.options.analytics.track(chapter);
   }
 
   private async advance(next: () => StoryStep): Promise<void> {
@@ -89,7 +106,7 @@ export class Renderer {
   private show(id: AppId): AppView {
     let app = this.apps.get(id);
     if (!app) {
-      app = createApp(id);
+      app = createApp(id, { moments: () => this.engine.describeMoments() });
       this.apps.set(id, app);
     }
     if (this.current !== app) {

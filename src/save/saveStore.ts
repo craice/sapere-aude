@@ -10,6 +10,17 @@ export interface SaveStore {
 }
 
 export const SAVE_KEY = 'sapere-aude:save:v1';
+const FORMAT = 2;
+
+/** Impressão digital do roteiro compilado (FNV-1a, 32 bits): um save só vale para o mesmo roteiro. */
+export function storyVersion(storyJson: string): string {
+  let hash = 0x811c9dc5;
+  for (let i = 0; i < storyJson.length; i++) {
+    hash ^= storyJson.charCodeAt(i);
+    hash = Math.imul(hash, 0x01000193);
+  }
+  return (hash >>> 0).toString(16).padStart(8, '0');
+}
 
 function isCheckpoint(value: unknown): value is Checkpoint {
   if (typeof value !== 'object' || value === null) return false;
@@ -23,8 +34,11 @@ function isCheckpoint(value: unknown): value is Checkpoint {
   );
 }
 
-/** Salvamento que nunca lança exceção: sem armazenamento, o jogo só não retoma. */
-export function createSaveStore(storage: StorageLike | null): SaveStore {
+/**
+ * Salvamento que nunca lança exceção: sem armazenamento, o jogo só não retoma.
+ * Um save feito com outra versão do roteiro é ignorado (o jogo começa do zero).
+ */
+export function createSaveStore(storage: StorageLike | null, version: string): SaveStore {
   return {
     load() {
       try {
@@ -32,15 +46,15 @@ export function createSaveStore(storage: StorageLike | null): SaveStore {
         if (!raw) return null;
         const data: unknown = JSON.parse(raw);
         if (typeof data !== 'object' || data === null) return null;
-        const { v, checkpoint } = data as { v?: unknown; checkpoint?: unknown };
-        return v === 1 && isCheckpoint(checkpoint) ? checkpoint : null;
+        const { v, story, checkpoint } = data as { v?: unknown; story?: unknown; checkpoint?: unknown };
+        return v === FORMAT && story === version && isCheckpoint(checkpoint) ? checkpoint : null;
       } catch {
         return null;
       }
     },
     save(checkpoint) {
       try {
-        storage?.setItem(SAVE_KEY, JSON.stringify({ v: 1, checkpoint }));
+        storage?.setItem(SAVE_KEY, JSON.stringify({ v: FORMAT, story: version, checkpoint }));
       } catch {
         // Sem espaço ou bloqueado: segue sem salvar.
       }

@@ -38,6 +38,11 @@ export interface Moment {
   type: MomentType;
 }
 
+export interface DescribedMoment extends Moment {
+  /** Rótulo para o retrato, vindo da função Ink `rotulo_momento(id)`. */
+  label: string;
+}
+
 const INITIAL_APP: AppId = 'setup';
 const INITIAL_TIME = '07:00';
 
@@ -99,6 +104,16 @@ export class StoryEngine {
         }
         return { id, type: type as MomentType };
       });
+  }
+
+  describeMoments(): DescribedMoment[] {
+    return this.getMoments().map((moment) => {
+      const label: unknown = this.story.EvaluateFunction('rotulo_momento', [moment.id]);
+      if (typeof label !== 'string' || label.trim() === '') {
+        throw new Error(`Momento "${moment.id}" sem rótulo em rotulo_momento()`);
+      }
+      return { ...moment, label: label.trim() };
+    });
   }
 
   private advance(): StoryStep {

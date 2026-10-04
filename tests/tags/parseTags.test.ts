@@ -14,6 +14,16 @@ describe('parseLineTags', () => {
     expect(parseLineTags(['notify: amparo'])).toEqual({ notify: 'amparo' });
   });
 
+  it('lê kant e evento', () => {
+    expect(parseLineTags(['kant: cap2'])).toEqual({ kant: 'cap2' });
+    expect(parseLineTags(['evento: leu_kant'])).toEqual({ evento: 'leu_kant' });
+  });
+
+  it('aceita os apps e personagens do jogo completo', () => {
+    for (const app of ['narrativa', 'retrato', 'texto']) expect(parseLineTags([`app: ${app}`])).toEqual({ app });
+    for (const p of ['vidafit', 'resumao', 'guru', 'celia', 'arnaldo', 'duda', 'liberta']) expect(parseLineTags([`from: ${p}`])).toEqual({ from: p });
+  });
+
   it('tolera espaços extras', () => {
     expect(parseLineTags(['  from :   bia  '])).toEqual({ from: 'bia' });
   });
@@ -29,6 +39,9 @@ describe('parseLineTags', () => {
     [['from: bia', 'notify: amparo'], 'from e notify'],
     [['title: sim'], 'title não leva valor'],
     [['from'], 'from precisa de valor'],
+    [['kant: capitulo1'], 'kant inválido'],
+    [['kant'], 'kant precisa de valor'],
+    [['evento: Leu Kant'], 'evento inválido'],
   ])('rejeita %j (%s)', (tags) => {
     expect(() => parseLineTags(tags)).toThrow(TagError);
   });

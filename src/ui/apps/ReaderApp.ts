@@ -18,6 +18,8 @@ export class ReaderApp implements AppView {
   private readonly contador: HTMLElement;
   private readonly choices: HTMLElement;
   private guardadas = 0;
+  /** A matéria acabou de abrir: o foco fica na manchete (leitor de tela anuncia), não no botão de resumo. */
+  private recemAberta = false;
 
   constructor() {
     this.fonte = h('p', { className: 'leitor__fonte' });
@@ -37,7 +39,10 @@ export class ReaderApp implements AppView {
     if (line.meta.from) {
       this.fonte.textContent = line.text;
     } else if (line.meta.title) {
-      this.artigo.append(h('h1', { className: 'leitor__manchete', text: line.text }));
+      const manchete = h('h1', { className: 'leitor__manchete', text: line.text, attrs: { tabindex: '-1' } });
+      this.artigo.append(manchete);
+      manchete.focus();
+      this.recemAberta = true;
     } else {
       this.artigo.append(h('p', { text: line.text }));
     }
@@ -58,7 +63,8 @@ export class ReaderApp implements AppView {
     this.listaTrechos.replaceChildren(...fichas);
     this.trechos.hidden = fichas.length === 0;
     this.choices.replaceChildren(...acoes);
-    focusPreferred(buttons, choices);
+    if (this.recemAberta) this.recemAberta = false;
+    else focusPreferred(buttons, choices);
   }
 
   private guardar(): void {

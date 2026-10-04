@@ -20,6 +20,13 @@ describe('lintInk', () => {
     ]);
   });
 
+  it('não confunde https:// com comentário', () => {
+    expect(lintInk('* [Ler em https://x.org] #sugestao\n', 'd.ink')).toEqual([
+      'd.ink:1: tag de escolha fora dos colchetes — use * [Texto #tag]',
+    ]);
+    expect(lintInk('Veja https://x.org // comentário # não é tag\n', 'e.ink')).toEqual([]);
+  });
+
   it('ignora comentários', () => {
     expect(lintInk('// # isto é um comentário\nOi\n', 'c.ink')).toEqual([]);
   });

@@ -5,7 +5,8 @@
 export function lintInk(source: string, fileName: string): string[] {
   const errors: string[] = [];
   source.split(/\r?\n/).forEach((rawLine, i) => {
-    const line = rawLine.replace(/\/\/.*$/, '');
+    // Comentário Ink: `//` que não faz parte de um endereço (https://…).
+    const line = rawLine.replace(/(^|[^:])\/\/.*$/, '$1');
     const n = i + 1;
     if (/^\s*#/.test(line)) {
       errors.push(`${fileName}:${n}: tag sozinha na linha — mova-a para o fim da linha a que se refere`);

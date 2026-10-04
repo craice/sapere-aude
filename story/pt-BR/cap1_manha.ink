@@ -26,6 +26,7 @@ Resposta enviada em 2 segundos. Seu dia segue tranquilo. 😊 # notify: amparo
 -> fim_cap1
 
 = leitura
+Tudo bem! 😊 Qualquer coisa, estou aqui. # notify: amparo
 Folha do Bairro # app: leitor # from: folha # time: 07:53
 Biblioteca do bairro deixará de abrir à noite # title
 A Biblioteca Comunitária da praça vai encerrar o atendimento às 18h a partir do mês que vem. Hoje ela fica aberta até as 22h.
@@ -86,6 +87,7 @@ Com o que você leu, qual é a sua posição? # app: leitor
 
 = envio
 ~ registrar("cap1_bia", "pensou")
+~ cap1_leu = true
 ~ ajustar_conforto(-10)
 Li a matéria.{ficha_custo: O horário da noite custa uns R$ 18 mil por mês.}{ficha_uso: 40% dos empréstimos são depois das 18h.}{ficha_consulta: E ninguém perguntou nada pra quem usa.}{ficha_orcamento: Isso é 0,3% do orçamento da Cultura.}{posicao_cap1 == "erro": Acho que cortar é um erro.}{posicao_cap1 == "ouvir": Entendo a economia, mas deviam ter ouvido a gente.}{posicao_cap1 == "sentido": No fim, acho que o corte faz sentido.} # from: eu # app: chat # time: 07:58
 nossa, vc leu mesmo 😮 # from: bia
@@ -94,5 +96,5 @@ Você passou 5 minutos nisso. Seu dia está um pouco menos tranquilo. # notify: 
 -> fim_cap1
 
 = fim_cap1
-// Plano 2: inserir aqui o cartão de Kant do capítulo 1.
--> fim_demo
+Isso foi o que Kant chamou de menoridade autoimposta. # kant: cap1
+-> cap2
